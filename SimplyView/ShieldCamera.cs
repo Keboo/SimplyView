@@ -17,7 +17,7 @@ namespace SimplyView
 
         private static string BuildPanUrl(int command)
         {
-            var builder = new UriBuilder("http", CameraAddress, 80, "decoder_control.cgi")
+            UriBuilder builder = new("http", CameraAddress, 80, "decoder_control.cgi")
             {
                 Query = string.Join('&', QueryStringParts())
             };
@@ -37,7 +37,7 @@ namespace SimplyView
 
         private static string BuildCameraControlUrl(int parameter, int value)
         {
-            var builder = new UriBuilder("http", CameraAddress, 80, "camera_control.cgi")
+            UriBuilder builder = new("http", CameraAddress, 80, "camera_control.cgi")
             {
                 Query = string.Join('&', QueryStringParts())
             };
@@ -52,6 +52,22 @@ namespace SimplyView
                 yield return $"loginpas={Password}";
                 yield return $"param={parameter}";
                 yield return $"value={value}";
+            }
+        }
+
+        private static string BuildCameraVideoUrl()
+        {
+            UriBuilder builder = new("http", CameraAddress, 80, "videostream.cgi")
+            {
+                Query = string.Join('&', QueryStringParts())
+            };
+
+            return builder.ToString();
+
+            IEnumerable<string> QueryStringParts()
+            {
+                yield return $"loginuse={UserName}";
+                yield return $"loginpas={Password}";
             }
         }
 
@@ -78,5 +94,6 @@ namespace SimplyView
         public async Task SetIRMode(bool isOn)
             => await HttpClient.GetAsync(BuildCameraControlUrl(14, isOn ? 1 : 0));
 
+        public Uri GetVideoUri() => new(BuildCameraVideoUrl());
     }
 }

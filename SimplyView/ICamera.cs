@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace SimplyView
 {
@@ -7,5 +8,6 @@ namespace SimplyView
         Task StartPan(CameraDirection direction);
         Task StopPan(CameraDirection direction);
         Task SetIRMode(bool isOn);
+        Uri GetVideoUri();
     }
 }

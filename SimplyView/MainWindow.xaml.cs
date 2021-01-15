@@ -8,9 +8,10 @@ namespace SimplyView
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel ViewModel { get; }
         public MainWindow()
         {
-            DataContext = new MainWindowViewModel();
+            DataContext = ViewModel = new MainWindowViewModel();
             InitializeComponent();
 
             Loaded += MainWindow_Loaded;
@@ -18,7 +19,7 @@ namespace SimplyView
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await MediaElement.Open(new Uri(@"http://192.168.0.85/videostream.cgi?loginuse=admin&loginpas=123"));
+            await MediaElement.Open(ViewModel.VideoUri);
         }
     }
 }

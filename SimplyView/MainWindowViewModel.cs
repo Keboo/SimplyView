@@ -1,10 +1,13 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using System;
 
 namespace SimplyView
 {
     public class MainWindowViewModel : ObservableObject
     {
         private ICamera Camera { get; } = new ShieldCamera();
+
+        public Uri VideoUri => Camera.GetVideoUri();
 
         private bool _IsLeftPressed;
         public bool IsLeftPressed
