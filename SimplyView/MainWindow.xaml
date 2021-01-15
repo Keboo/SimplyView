@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
-        xmlns:local="clr-namespace:SimplyView" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:SimplyView" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type={x:Type local:MainWindowViewModel}}"
         Style="{StaticResource MaterialDesignWindow}"
@@ -27,28 +27,32 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="0" Grid.Row="1"
-                    Command="{Binding MoveCameraCommand}"
-                    CommandParameter="{x:Static local:CameraDirection.Left}">
+                    Grid.Column="0" Grid.Row="1">
                 <materialDesign:PackIcon Kind="ArrowLeftBoldOutline" />
+                <i:Interaction.Behaviors>
+                    <local:IsPressedBehavior IsPressed="{Binding IsLeftPressed}"/>
+                </i:Interaction.Behaviors>
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="1" Grid.Row="0"
-                    Command="{Binding MoveCameraCommand}"
-                    CommandParameter="{x:Static local:CameraDirection.Up}">
+                    Grid.Column="1" Grid.Row="0">
                 <materialDesign:PackIcon Kind="ArrowUpBoldOutline" />
+                <i:Interaction.Behaviors>
+                    <local:IsPressedBehavior IsPressed="{Binding IsUpPressed}"/>
+                </i:Interaction.Behaviors>
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="2" Grid.Row="1"
-                    Command="{Binding MoveCameraCommand}"
-                    CommandParameter="{x:Static local:CameraDirection.Right}">
+                    Grid.Column="2" Grid.Row="1">
                 <materialDesign:PackIcon Kind="ArrowRightBoldOutline" />
+                <i:Interaction.Behaviors>
+                    <local:IsPressedBehavior IsPressed="{Binding IsRightPressed}"/>
+                </i:Interaction.Behaviors>
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="1" Grid.Row="2"
-                    Command="{Binding MoveCameraCommand}"
-                    CommandParameter="{x:Static local:CameraDirection.Down}">
+                    Grid.Column="1" Grid.Row="2">
                 <materialDesign:PackIcon Kind="ArrowDownBoldOutline" />
+                <i:Interaction.Behaviors>
+                    <local:IsPressedBehavior IsPressed="{Binding IsDownPressed}"/>
+                </i:Interaction.Behaviors>
             </Button>
         </Grid>
         

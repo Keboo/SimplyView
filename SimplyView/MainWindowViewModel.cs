@@ -1,39 +1,88 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Input;
 
 namespace SimplyView
 {
-
     public class MainWindowViewModel : ObservableObject
     {
-        public const string CameraAddress = "192.168.0.85";
-
-
-        public ICommand MoveCameraCommand { get; }
         private ICamera Camera { get; } = new ShieldCamera();
 
-        public MainWindowViewModel()
+        private bool _IsLeftPressed;
+        public bool IsLeftPressed
         {
-            MoveCameraCommand = new RelayCommand<CameraDirection>(OnMoveCamera);
+            get => _IsLeftPressed;
+            set
+            {
+                if (SetProperty(ref _IsLeftPressed, value))
+                {
+                    if (value)
+                    {
+                        Camera.StartPan(CameraDirection.Left);
+                    }
+                    else
+                    {
+                        Camera.StopPan(CameraDirection.Left);
+                    }
+                }
+            }
         }
 
-        private void OnMoveCamera(CameraDirection direction)
+        private bool _IsUpPressed;
+        public bool IsUpPressed
         {
-            switch(direction)
+            get => _IsUpPressed;
+            set
             {
-                case CameraDirection.Left:
-                    Camera.PanLeft();
-                    break;
-                case CameraDirection.Up:
-                    Camera.PanUp();
-                    break;
-                case CameraDirection.Right:
-                    Camera.PanRight();
-                    break;
-                case CameraDirection.Down:
-                    Camera.PanDown();
-                    break;
+                if (SetProperty(ref _IsUpPressed, value))
+                {
+                    if (value)
+                    {
+                        Camera.StartPan(CameraDirection.Up);
+                    }
+                    else
+                    {
+                        Camera.StopPan(CameraDirection.Up);
+                    }
+                }
+            }
+        }
+
+        private bool _IsRightPressed;
+        public bool IsRightPressed
+        {
+            get => _IsRightPressed;
+            set
+            {
+                if (SetProperty(ref _IsRightPressed, value))
+                {
+                    if (value)
+                    {
+                        Camera.StartPan(CameraDirection.Right);
+                    }
+                    else
+                    {
+                        Camera.StopPan(CameraDirection.Right);
+                    }
+                }
+            }
+        }
+
+        private bool _IsDownPressed;
+        public bool IsDownPressed
+        {
+            get => _IsDownPressed;
+            set
+            {
+                if (SetProperty(ref _IsDownPressed, value))
+                {
+                    if (value)
+                    {
+                        Camera.StartPan(CameraDirection.Down);
+                    }
+                    else
+                    {
+                        Camera.StopPan(CameraDirection.Down);
+                    }
+                }
             }
         }
     }

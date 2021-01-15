@@ -41,7 +41,7 @@ namespace SimplyView
                 yield return $"loginuse={UserName}";
                 yield return $"loginpas={Password}";
                 yield return $"command={command}";
-                yield return $"onestep=1";
+                yield return $"onestep=0";
             }
         }
 
@@ -72,5 +72,24 @@ namespace SimplyView
             await Task.Delay(TimeSpan.FromSeconds(0.3));
             await HttpClient.GetAsync(BuildPanUrl(7));
         }
+
+        private static int GetStartPanCommand(CameraDirection direction)
+            => direction switch
+            {
+                CameraDirection.Up => 0,
+                CameraDirection.Down => 2,
+                CameraDirection.Left => 4,
+                CameraDirection.Right => 6,
+                _ => throw new InvalidOperationException()
+            };
+
+        private static int GetStopPanCommand(CameraDirection direction)
+            => GetStartPanCommand(direction) + 1;
+
+        public async Task StartPan(CameraDirection direction) 
+            => await HttpClient.GetAsync(BuildPanUrl(GetStartPanCommand(direction)));
+
+        public async Task StopPan(CameraDirection direction) 
+            => await HttpClient.GetAsync(BuildPanUrl(GetStopPanCommand(direction)));
     }
 }

@@ -4,9 +4,7 @@ namespace SimplyView
 {
     public interface ICamera
     {
-        Task PanLeft();
-        Task PanUp();
-        Task PanRight();
-        Task PanDown();
+        Task StartPan(CameraDirection direction);
+        Task StopPan(CameraDirection direction);
     }
 }
