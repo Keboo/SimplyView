@@ -11,7 +11,7 @@ namespace SimplyView
 
 
         public ICommand MoveCameraCommand { get; }
-        private ICamera Camera { get; }
+        private ICamera Camera { get; } = new ShieldCamera();
 
         public MainWindowViewModel()
         {

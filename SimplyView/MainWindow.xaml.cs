@@ -10,6 +10,7 @@ namespace SimplyView
     {
         public MainWindow()
         {
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
 
             Loaded += MainWindow_Loaded;

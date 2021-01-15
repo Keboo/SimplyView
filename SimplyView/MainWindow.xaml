@@ -6,6 +6,7 @@
         xmlns:ffme="clr-namespace:Unosquare.FFME;assembly=ffme.win"
         xmlns:local="clr-namespace:SimplyView" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type={x:Type local:MainWindowViewModel}}"
         Style="{StaticResource MaterialDesignWindow}"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -26,19 +27,27 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="0" Grid.Row="1">
+                    Grid.Column="0" Grid.Row="1"
+                    Command="{Binding MoveCameraCommand}"
+                    CommandParameter="{x:Static local:CameraDirection.Left}">
                 <materialDesign:PackIcon Kind="ArrowLeftBoldOutline" />
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="1" Grid.Row="0">
+                    Grid.Column="1" Grid.Row="0"
+                    Command="{Binding MoveCameraCommand}"
+                    CommandParameter="{x:Static local:CameraDirection.Up}">
                 <materialDesign:PackIcon Kind="ArrowUpBoldOutline" />
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="2" Grid.Row="1">
+                    Grid.Column="2" Grid.Row="1"
+                    Command="{Binding MoveCameraCommand}"
+                    CommandParameter="{x:Static local:CameraDirection.Right}">
                 <materialDesign:PackIcon Kind="ArrowRightBoldOutline" />
             </Button>
             <Button Style="{StaticResource MaterialDesignFlatButton}"
-                    Grid.Column="1" Grid.Row="2">
+                    Grid.Column="1" Grid.Row="2"
+                    Command="{Binding MoveCameraCommand}"
+                    CommandParameter="{x:Static local:CameraDirection.Down}">
                 <materialDesign:PackIcon Kind="ArrowDownBoldOutline" />
             </Button>
         </Grid>
