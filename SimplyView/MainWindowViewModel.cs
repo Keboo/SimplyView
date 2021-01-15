@@ -85,5 +85,18 @@ namespace SimplyView
                 }
             }
         }
+
+        private bool _IsIREnabled;
+        public bool IsIREnabled
+        {
+            get => _IsIREnabled;
+            set
+            {
+                if (SetProperty(ref _IsIREnabled, value))
+                {
+                    Camera.SetIRMode(value);
+                }
+            }
+        }
     }
 }

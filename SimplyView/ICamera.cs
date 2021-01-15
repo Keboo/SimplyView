@@ -6,5 +6,6 @@ namespace SimplyView
     {
         Task StartPan(CameraDirection direction);
         Task StopPan(CameraDirection direction);
+        Task SetIRMode(bool isOn);
     }
 }
