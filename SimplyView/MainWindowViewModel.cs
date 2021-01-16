@@ -1,5 +1,9 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace SimplyView
 {
@@ -98,6 +102,29 @@ namespace SimplyView
                 if (SetProperty(ref _IsIREnabled, value))
                 {
                     Camera.SetIRMode(value);
+                }
+            }
+        }
+
+        private ImageSource? _CurrentImage;
+        public ImageSource? CurrentImage
+        {
+            get => _CurrentImage;
+            set
+            {
+                SetProperty(ref _CurrentImage, value);
+            }
+        }
+
+        public MainWindowViewModel()
+        {
+            Task.Factory.StartNew(() => LoadImages());
+            
+            async void LoadImages()
+            {
+                while(true)
+                {
+                    CurrentImage = await Camera.GetSnapshot();
                 }
             }
         }

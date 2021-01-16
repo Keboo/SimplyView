@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace SimplyView
 {
@@ -9,6 +8,7 @@ namespace SimplyView
     public partial class MainWindow : Window
     {
         private MainWindowViewModel ViewModel { get; }
+
         public MainWindow()
         {
             DataContext = ViewModel = new MainWindowViewModel();
@@ -19,7 +19,7 @@ namespace SimplyView
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await MediaElement.Open(ViewModel.VideoUri);
+            //await MediaElement.Open(ViewModel.VideoUri);
         }
     }
 }

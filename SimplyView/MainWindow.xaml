@@ -74,6 +74,7 @@
             </StackPanel>
         </StackPanel>
 
-        <ffme:MediaElement x:Name="MediaElement" Grid.Column="1"/>
+        <Image Source="{Binding CurrentImage}" />
+        <!--<ffme:MediaElement x:Name="MediaElement" Grid.Column="1"/>-->
     </Grid>
 </Window>
