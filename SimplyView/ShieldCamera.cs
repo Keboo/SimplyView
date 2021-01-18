@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,11 +14,13 @@ namespace SimplyView
 {
     public class ShieldCamera : ICamera
     {
-        //http://192.168.0.86/snapshot.cgi?user=&pwd=&16107528237720.605548810260109
         //http://192.168.0.86/get_camera_params.cgi?loginuse=admin&loginpas=123&1610693957440&_=1610693957441
         private const string CameraAddress = "192.168.0.86";
         private const string UserName = "admin";
         private const string Password = "123";
+
+        private static Regex SettingsParser { get; }
+            = new(@"var\s+(?<Name>\w+)=(?<Value>[^;]+);");
 
         private static HttpClient HttpClient { get; } = new HttpClient();
 
@@ -32,6 +35,8 @@ namespace SimplyView
                 $"value={value}");
 
         private static string BuildCameraVideoUrl() => BuildUrl("videostream.cgi");
+
+        private static string BuildSettingsUrl() => BuildUrl("get_camera_params.cgi");
 
         private static string BuildUrl(string path, params string[] queryStringParts)
         {
@@ -68,8 +73,8 @@ namespace SimplyView
         public async Task StopPan(CameraDirection direction) 
             => await HttpClient.GetAsync(BuildPanUrl(GetStopPanCommand(direction)));
 
-        public async Task SetIRMode(bool isOn)
-            => await HttpClient.GetAsync(BuildCameraControlUrl(14, isOn ? 1 : 0));
+        private static async Task SetIRMode(bool isOn)
+            => await HttpClient.GetAsync(BuildCameraControlUrl(14, isOn ? 0 : 1));
 
         public Uri GetVideoUri() => new(BuildCameraVideoUrl());
 
@@ -97,6 +102,40 @@ namespace SimplyView
             {
                 VideoCapture.Value.Dispose();
             }
+        }
+
+        public async Task<IReadOnlyList<Setting>> GetSettings()
+        {
+            string settingsString = await HttpClient.GetStringAsync(BuildSettingsUrl());
+
+            var rv = new List<Setting>();
+            foreach(Match match in SettingsParser.Matches(settingsString))
+            {
+                string name = match.Groups["Name"].Value;
+                string value = match.Groups["Value"].Value;
+
+                switch(name)
+                {
+                    case "ircut":
+                        rv.Add(new BoolSetting(name, value == "1"));
+                        break;
+                    default:
+                        rv.Add(new StringSetting(name, value));
+                        break;
+                }
+            }
+
+            return rv;
+        }
+
+        public async Task ApplySetting(Setting setting)
+        {
+            if (setting is BoolSetting boolSetting 
+                && setting.Name == "ircut")
+            {
+                await SetIRMode(boolSetting.Value);
+            }
+            throw new NotImplementedException($"No settings control defined for {setting}");
         }
     }
 }

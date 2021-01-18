@@ -1,5 +1,7 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -101,7 +103,7 @@ namespace SimplyView
             {
                 if (SetProperty(ref _IsIREnabled, value))
                 {
-                    Camera.SetIRMode(value);
+                    Camera.ApplySetting(new BoolSetting("ircut", value));
                 }
             }
         }
@@ -125,6 +127,16 @@ namespace SimplyView
                     CurrentImage = await Camera.GetNextFrame(token);
                 }
             }
+        }
+
+        internal async Task OnLoad()
+        {
+            IReadOnlyList<Setting> settings = await Camera.GetSettings();
+
+            _IsIREnabled = settings
+                .OfType<BoolSetting>()
+                .FirstOrDefault(x => x.Name == "ircut")?.Value == false;
+            OnPropertyChanged(nameof(IsIREnabled));
         }
 
         public void Dispose()

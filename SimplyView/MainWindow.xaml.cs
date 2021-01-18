@@ -15,7 +15,13 @@ namespace SimplyView
             DataContext = ViewModel = new MainWindowViewModel();
             InitializeComponent();
 
+            Loaded += MainWindow_Loaded;
             Closing += MainWindow_Closing;
+        }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await ViewModel.OnLoad();
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
