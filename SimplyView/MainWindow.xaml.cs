@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace SimplyView
 {
@@ -14,12 +15,12 @@ namespace SimplyView
             DataContext = ViewModel = new MainWindowViewModel();
             InitializeComponent();
 
-            Loaded += MainWindow_Loaded;
+            Closing += MainWindow_Closing;
         }
 
-        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            //await MediaElement.Open(ViewModel.VideoUri);
+            ViewModel.Dispose();
         }
     }
 }

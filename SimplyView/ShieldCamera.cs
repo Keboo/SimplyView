@@ -2,17 +2,15 @@
 using OpenCvSharp.WpfExtensions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace SimplyView
 {
-
     public class ShieldCamera : ICamera
     {
         //http://192.168.0.86/snapshot.cgi?user=&pwd=&16107528237720.605548810260109
@@ -34,9 +32,6 @@ namespace SimplyView
                 $"value={value}");
 
         private static string BuildCameraVideoUrl() => BuildUrl("videostream.cgi");
-
-        private static string BuildSnapshotUrl()
-            => BuildUrl("snapshot.cgi");
 
         private static string BuildUrl(string path, params string[] queryStringParts)
         {
@@ -78,14 +73,30 @@ namespace SimplyView
 
         public Uri GetVideoUri() => new(BuildCameraVideoUrl());
 
-        public async Task<BitmapSource?> GetSnapshot()
+        private Lazy<VideoCapture> VideoCapture { get; } = new Lazy<VideoCapture>(() =>
+          {
+              VideoCapture vc = new();
+              vc.Open(BuildCameraVideoUrl());
+              return vc;
+          });
+
+        public async Task<BitmapSource?> GetNextFrame(CancellationToken token)
         {
-            HttpResponseMessage response = await HttpClient.GetAsync(BuildSnapshotUrl());
-            if (!response.IsSuccessStatusCode) return null;
+            using Mat mat = new();
+            if (VideoCapture.Value.Read(mat) && !token.IsCancellationRequested)
+            {
+                return await Application.Current.Dispatcher.InvokeAsync(() => mat.ToBitmapSource());
+            }
 
-            using var mat = Mat.FromStream(await response.Content.ReadAsStreamAsync(), ImreadModes.AnyColor);
+            return null;
+        }
 
-            return mat.ToBitmapSource();
+        public void Dispose()
+        {
+            if (VideoCapture.IsValueCreated)
+            {
+                VideoCapture.Value.Dispose();
+            }
         }
     }
 }

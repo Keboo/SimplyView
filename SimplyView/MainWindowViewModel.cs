@@ -1,14 +1,14 @@
 ﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
-using System.Net;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace SimplyView
 {
-    public class MainWindowViewModel : ObservableObject
+    public class MainWindowViewModel : ObservableObject, IDisposable
     {
+        private CancellationManager CancelationManager { get; } = new();
         private ICamera Camera { get; } = new ShieldCamera();
 
         public Uri VideoUri => Camera.GetVideoUri();
@@ -110,23 +110,26 @@ namespace SimplyView
         public ImageSource? CurrentImage
         {
             get => _CurrentImage;
-            set
-            {
-                SetProperty(ref _CurrentImage, value);
-            }
+            set => SetProperty(ref _CurrentImage, value);
         }
 
         public MainWindowViewModel()
         {
-            Task.Factory.StartNew(() => LoadImages());
+            CancellationToken token = CancelationManager.GetNextToken();
+            Task.Factory.StartNew(() => LoadImages(), token);
             
             async void LoadImages()
             {
-                while(true)
+                while(!token.IsCancellationRequested)
                 {
-                    CurrentImage = await Camera.GetSnapshot();
+                    CurrentImage = await Camera.GetNextFrame(token);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            CancelationManager.Cancel();
         }
     }
 }

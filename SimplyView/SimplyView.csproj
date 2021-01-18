@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFME.Windows" Version="4.3.340" />
     <PackageReference Include="MaterialDesignThemes" Version="4.0.0-ci2347" />
     <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.0.0-preview4" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.5.1.20201229" />
     <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.5.1.20201229" />
+    <PackageReference Include="RestSharp" Version="106.11.8-alpha.0.12" />
   </ItemGroup>
 
 </Project>

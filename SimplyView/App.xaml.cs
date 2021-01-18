@@ -7,9 +7,6 @@ namespace SimplyView
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-            Unosquare.FFME.Library.FFmpegDirectory = @"D:\Dev\SimplyView\ffmpeg";
-        }
+
     }
 }
