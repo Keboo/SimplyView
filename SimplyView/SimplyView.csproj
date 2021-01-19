@@ -5,6 +5,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>D:\Dev\SimplyView\SimplyView\SimplyView.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
