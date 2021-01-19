@@ -12,9 +12,8 @@ using System.Windows.Media.Imaging;
 
 namespace SimplyView
 {
-    public class ShieldCamera : ICamera
+    public sealed class ShieldCamera : ICamera
     {
-        //http://192.168.0.86/get_camera_params.cgi?loginuse=admin&loginpas=123&1610693957440&_=1610693957441
         private const string CameraAddress = "192.168.0.86";
         private const string UserName = "admin";
         private const string Password = "123";
@@ -85,11 +84,32 @@ namespace SimplyView
               return vc;
           });
 
+        private BackgroundSubtractor BackgroundSubtractor { get; } 
+            = BackgroundSubtractorMOG.Create(history: 200, backgroundRatio:0.001);
+        private Mat ForegroundMask { get; } = new();
+        private bool ShowMovement { get; set; }
+
+        private static Mat Element { get; }
+            = Cv2.GetStructuringElement(MorphShapes.Ellipse, new OpenCvSharp.Size(5, 5));
+
         public async Task<BitmapSource?> GetNextFrame(CancellationToken token)
         {
             using Mat mat = new();
             if (VideoCapture.Value.Read(mat) && !token.IsCancellationRequested)
             {
+                if (ShowMovement)
+                {
+                    BackgroundSubtractor.Apply(mat, ForegroundMask);
+                    using var erode = ForegroundMask.Erode(Element);
+                    using var dialate = erode.Dilate(Element, iterations: 2);
+                    using var alpha = new Mat(ForegroundMask.Size(), MatType.CV_8UC1, new Scalar(200));
+                    Cv2.BitwiseOr(alpha, dialate, alpha);
+                    var channels = Enumerable.Range(0, mat.Channels())
+                        .Select(x => mat.ExtractChannel(x))
+                        .Concat(new[] { alpha })
+                        .ToArray();
+                    Cv2.Merge(channels, mat);
+                }
                 return await Application.Current.Dispatcher.InvokeAsync(() => mat.ToBitmapSource());
             }
 
@@ -102,6 +122,8 @@ namespace SimplyView
             {
                 VideoCapture.Value.Dispose();
             }
+            BackgroundSubtractor.Dispose();
+            ForegroundMask.Dispose();
         }
 
         public async Task<IReadOnlyList<Setting>> GetSettings()
@@ -109,6 +131,7 @@ namespace SimplyView
             string settingsString = await HttpClient.GetStringAsync(BuildSettingsUrl());
 
             var rv = new List<Setting>();
+            rv.Add(new BoolSetting(CameraOptions.ShowMovement, ShowMovement));
             foreach(Match match in SettingsParser.Matches(settingsString))
             {
                 string name = match.Groups["Name"].Value;
@@ -130,10 +153,17 @@ namespace SimplyView
 
         public async Task ApplySetting(Setting setting)
         {
-            if (setting is BoolSetting boolSetting 
-                && setting.Name == "ircut")
+            if (setting is BoolSetting boolSetting)
             {
-                await SetIRMode(boolSetting.Value);
+                switch(setting.Name)
+                {
+                    case "ircut":
+                        await SetIRMode(boolSetting.Value);
+                        break;
+                    case CameraOptions.ShowMovement:
+                        ShowMovement = boolSetting.Value;
+                        break;
+                }
             }
             throw new NotImplementedException($"No settings control defined for {setting}");
         }

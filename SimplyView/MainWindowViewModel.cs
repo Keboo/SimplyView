@@ -108,6 +108,19 @@ namespace SimplyView
             }
         }
 
+        private bool _ShowMovement;
+        public bool ShowMovement
+        {
+            get => _ShowMovement;
+            set
+            {
+                if (SetProperty(ref _ShowMovement, value))
+                {
+                    Camera.ApplySetting(new BoolSetting(CameraOptions.ShowMovement, value));
+                }
+            }
+        }
+
         private ImageSource? _CurrentImage;
         public ImageSource? CurrentImage
         {
@@ -137,6 +150,11 @@ namespace SimplyView
                 .OfType<BoolSetting>()
                 .FirstOrDefault(x => x.Name == "ircut")?.Value == false;
             OnPropertyChanged(nameof(IsIREnabled));
+
+            _ShowMovement = settings
+                .OfType<BoolSetting>()
+                .FirstOrDefault(x => x.Name == CameraOptions.ShowMovement)?.Value == true;
+            OnPropertyChanged(nameof(ShowMovement));
         }
 
         public void Dispose()

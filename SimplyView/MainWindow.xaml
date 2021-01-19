@@ -73,8 +73,27 @@
                     </TextBlock.Style>
                 </TextBlock>
             </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <ToggleButton Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                              IsChecked="{Binding ShowMovement}" />
+                <TextBlock Margin="5,0,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                            <Setter Property="Text"  Value="Movement Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowMovement}" Value="True">
+                                    <Setter Property="Text"  Value="Movement Shown" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
         </StackPanel>
 
-        <Image Source="{Binding CurrentImage}" Grid.Column="1" />
+        <Grid Grid.Column="1">
+            <Image Source="{Binding CurrentImage}" Grid.Column="1" />
+        </Grid>
     </Grid>
 </Window>
